@@ -31,6 +31,17 @@ public class SampleGwtServiceImpl extends RemoteServiceServlet implements Sample
 		return calcService.getCalculations();
 	}
 
+	@Override
+	public boolean deleteCalculation(Calc calc) {
+		for(Calc c : calcService.getCalculations()) {
+			if(c.equals(calc)) {
+				calcService.deleteCalc(c);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private Double calculate(double productOne, double productTwo, Action action) {
 		if(action == Action.dodawanie) {
 			return productOne + productTwo;

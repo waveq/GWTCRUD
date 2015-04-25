@@ -55,4 +55,23 @@ public class Calc implements IsSerializable {
 		this.result = result;
 	}
 
+
+	@Override
+	public boolean equals(Object obj) {
+		Calc c;
+		if(obj instanceof Calc) {
+			c = (Calc) obj;
+			System.out.println("true");
+		}
+		else {
+			return false;
+		}
+		if(c.getAction() == action && c.getProductOne() == productOne
+				&& c.getProductTwo() == productTwo && c.getResult() == result) {
+			System.out.println("equals");
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

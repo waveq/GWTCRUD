@@ -15,6 +15,7 @@ public interface SampleGwtService extends RemoteService {
 	double calculateResult(Calc calc);
 	boolean saveCalculation(Calc calc);
 	List<Calc> getAllCalculations();
+	boolean deleteCalculation(Calc calc);
 
 	/**
 	 * Utility/Convenience class.

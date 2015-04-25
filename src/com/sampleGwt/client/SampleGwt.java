@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.sampleGwt.client.dbservice.CalcService;
 import com.sampleGwt.client.entity.*;
 import com.sampleGwt.client.myEnum.*;
@@ -35,11 +36,20 @@ public class SampleGwt implements EntryPoint {
 
 	static List<Calc> calculationList = new ArrayList<Calc>();
 	static Calc calc;
-	private CalcService calcService = new CalcService();
+
+
+	final static ListDataProvider<Calc> dataProvider = new ListDataProvider<Calc>();
+	final static Button deleteButton = new Button("Usun dzialanie");
+	final static SingleSelectionModel<Calc> selectionModel = new SingleSelectionModel<Calc>();
 
 	public void onModuleLoad() {
-
 		setup();
+		setButtons();
+
+
+	}
+
+	private void setButtons() {
 		calcButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				setAction();
@@ -51,9 +61,19 @@ public class SampleGwt implements EntryPoint {
 
 		saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				SampleGwtService.App.getInstance().saveCalculation(calc, new SaveCalcAsyncCallback());
-				calcService.addCalc(calc);
-				prepareCalculations();
+				SampleGwtService.App.getInstance().saveCalculation(calc, new saveCalcAsyncCallback());
+				SampleGwtService.App.getInstance().getAllCalculations(new getCalculationsAsyncCallback());
+			}
+		});
+
+		deleteButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Calc selected = selectionModel.getSelectedObject();
+				if (selected != null) {
+					dataProvider.getList().remove(selected);
+					SampleGwtService.App.getInstance().deleteCalculation(selected, new deleteCalcAsyncCallback());
+				}
 			}
 		});
 	}
@@ -78,8 +98,9 @@ public class SampleGwt implements EntryPoint {
 		RootPanel.get("product2").add(productTwo);
 		RootPanel.get("button").add(calcButton);
 		RootPanel.get("result").add(result);
+		RootPanel.get("deleteButton").add(deleteButton);
 		setActions();
-		prepareCalculations();
+		SampleGwtService.App.getInstance().getAllCalculations(new getCalculationsAsyncCallback());
 	}
 
 	private void setActions() {
@@ -94,8 +115,6 @@ public class SampleGwt implements EntryPoint {
 	}
 
 	private static void prepareCalculations() {
-		SampleGwtService.App.getInstance().getAllCalculations(new getCalculationsAsyncCallback());
-
 		CellTable<Calc> table = new CellTable<Calc>();
 
 		TextColumn<Calc> productOneC = new TextColumn<Calc>() {
@@ -131,13 +150,16 @@ public class SampleGwt implements EntryPoint {
 		table.addColumn(productTwoC, "produkt2");
 		table.addColumn(resultC, "wynik");
 
-		ListDataProvider<Calc> dataProvider = new ListDataProvider<Calc>();
+
 		dataProvider.addDataDisplay(table);
 
 		List<Calc> list = dataProvider.getList();
+
+		list.clear();
 		for (Calc calc : calculationList) {
 			list.add(calc);
 		}
+		table.setSelectionModel(selectionModel);
 
 		RootPanel.get("calculations").clear();
 		RootPanel.get("calculations").add(table);
@@ -162,9 +184,22 @@ public class SampleGwt implements EntryPoint {
 		}
 	}
 
-	private static class SaveCalcAsyncCallback implements AsyncCallback<Boolean> {
+	private static class saveCalcAsyncCallback implements AsyncCallback<Boolean> {
 
-		public SaveCalcAsyncCallback() {
+		public saveCalcAsyncCallback() {
+		}
+		public void onFailure(Throwable throwable) {
+		}
+
+		@Override
+		public void onSuccess(Boolean result) {
+			SampleGwtService.App.getInstance().getAllCalculations(new getCalculationsAsyncCallback());
+		}
+	}
+
+	private static class deleteCalcAsyncCallback implements AsyncCallback<Boolean> {
+
+		public deleteCalcAsyncCallback() {
 		}
 		public void onFailure(Throwable throwable) {
 		}
@@ -187,7 +222,5 @@ public class SampleGwt implements EntryPoint {
 			calculationList = calculations;
 			prepareCalculations();
 		}
-
-
 	}
 }

@@ -21,11 +21,12 @@ public class CalcService {
 		return calculations;
 	}
 
-	public Object deleteAuction(Calc c) {
+	public Object deleteCalc(Calc c) {
 		for(int i =0;i< getCalculations().size();i++) {
 			if(c.getProductOne() == getCalculations().get(i).getProductOne()
 					&& c.getProductTwo() == getCalculations().get(i).getProductTwo()
 					&& c.getAction() == getCalculations().get(i).getAction()) {
+				System.out.println("deleted");
 				return calculations.remove(i);
 			}
 		}

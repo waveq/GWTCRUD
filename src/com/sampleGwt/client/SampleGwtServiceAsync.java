@@ -13,4 +13,6 @@ public interface SampleGwtServiceAsync {
 	void saveCalculation(Calc calc, AsyncCallback<Boolean> async);
 
 	void getAllCalculations(AsyncCallback<List<Calc>> async);
+
+	void deleteCalculation(Calc calc, AsyncCallback<Boolean> async);
 }
