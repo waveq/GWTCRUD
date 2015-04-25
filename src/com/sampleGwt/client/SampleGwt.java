@@ -1,7 +1,6 @@
 package com.sampleGwt.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.*;
@@ -34,23 +33,25 @@ public class SampleGwt implements EntryPoint {
 	final TextBox productTwo = new TextBox();
 	final Label result = new Label();
 
+	static List<Calc> calculationList = new ArrayList<Calc>();
 	static Calc calc;
 	private CalcService calcService = new CalcService();
 
 	public void onModuleLoad() {
+
 		setup();
 		calcButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				setAction();
 				calc = new Calc(Double.parseDouble(productOne.getText()), Double.parseDouble(productTwo.getText()), action);
 
-				SampleGwtService.App.getInstance().calculateResult(calc, new MyAsyncCallback(result));
+				SampleGwtService.App.getInstance().calculateResult(calc, new CalculateAsyncCallback(result));
 			}
 		});
 
 		saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-
+				SampleGwtService.App.getInstance().saveCalculation(calc, new SaveCalcAsyncCallback());
 				calcService.addCalc(calc);
 				prepareCalculations();
 			}
@@ -92,7 +93,9 @@ public class SampleGwt implements EntryPoint {
 		RootPanel.get("action").add(actionsPanel);
 	}
 
-	private void prepareCalculations() {
+	private static void prepareCalculations() {
+		SampleGwtService.App.getInstance().getAllCalculations(new getCalculationsAsyncCallback());
+
 		CellTable<Calc> table = new CellTable<Calc>();
 
 		TextColumn<Calc> productOneC = new TextColumn<Calc>() {
@@ -132,7 +135,7 @@ public class SampleGwt implements EntryPoint {
 		dataProvider.addDataDisplay(table);
 
 		List<Calc> list = dataProvider.getList();
-		for (Calc calc : calcService.getCalculations()) {
+		for (Calc calc : calculationList) {
 			list.add(calc);
 		}
 
@@ -140,10 +143,10 @@ public class SampleGwt implements EntryPoint {
 		RootPanel.get("calculations").add(table);
 	}
 
-	private static class MyAsyncCallback implements AsyncCallback<Double> {
+	private static class CalculateAsyncCallback implements AsyncCallback<Double> {
 		private Label resultLabel;
 
-		public MyAsyncCallback(Label label) {
+		public CalculateAsyncCallback(Label label) {
 			this.resultLabel = label;
 		}
 		public void onFailure(Throwable throwable) {
@@ -157,5 +160,34 @@ public class SampleGwt implements EntryPoint {
 			calc.setResult(result);
 			RootPanel.get("save").add(saveButton);
 		}
+	}
+
+	private static class SaveCalcAsyncCallback implements AsyncCallback<Boolean> {
+
+		public SaveCalcAsyncCallback() {
+		}
+		public void onFailure(Throwable throwable) {
+		}
+
+		@Override
+		public void onSuccess(Boolean result) {
+			SampleGwtService.App.getInstance().getAllCalculations(new getCalculationsAsyncCallback());
+		}
+	}
+
+	private static class getCalculationsAsyncCallback implements AsyncCallback<List<Calc>> {
+
+		public getCalculationsAsyncCallback() {
+		}
+		public void onFailure(Throwable throwable) {
+		}
+
+		@Override
+		public void onSuccess(List<Calc> calculations) {
+			calculationList = calculations;
+			prepareCalculations();
+		}
+
+
 	}
 }
