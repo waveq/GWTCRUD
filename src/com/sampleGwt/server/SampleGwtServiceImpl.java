@@ -23,7 +23,7 @@ public class SampleGwtServiceImpl extends RemoteServiceServlet implements Sample
 			return productOne - productTwo;
 		} else if(action == Action.ratio) {
 			return productOne * productTwo;
-		} else if(action == Action.quotien) {
+		} else if(action == Action.divide) {
 			return divide(productOne, productTwo);
 		}
 		return null;
