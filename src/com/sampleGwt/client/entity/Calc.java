@@ -11,6 +11,7 @@ public class Calc implements IsSerializable {
 	private double productOne;
 	private double productTwo;
 	private Action action;
+	private double result;
 
 	public Calc(double productOne, double productTwo, Action action) {
 		this.productOne = productOne;
@@ -20,6 +21,7 @@ public class Calc implements IsSerializable {
 
 	public Calc() {
 	}
+
 
 	public double getProductOne() {
 		return productOne;
@@ -43,6 +45,14 @@ public class Calc implements IsSerializable {
 
 	public void setAction(Action action) {
 		this.action = action;
+	}
+
+	public double getResult() {
+		return result;
+	}
+
+	public void setResult(double result) {
+		this.result = result;
 	}
 
 }
