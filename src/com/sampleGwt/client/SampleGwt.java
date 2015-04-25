@@ -26,7 +26,7 @@ public class SampleGwt implements EntryPoint {
 	final RadioButton radioDiff = new RadioButton("actionGroup", "-");
 	final RadioButton radioDivide = new RadioButton("actionGroup", "/");
 	final RadioButton radioRatio = new RadioButton("actionGroup", "*");
-	Action action = Action.sum;
+	Action action = Action.dodawanie;
 
 	final static Button saveButton = new Button("Zapisz");
 	final TextBox productOne = new TextBox();
@@ -60,16 +60,16 @@ public class SampleGwt implements EntryPoint {
 
 	private void setAction() {
 		if(radioSum.getValue()) {
-			action = Action.sum;
+			action = Action.dodawanie;
 		}
 		if(radioDiff.getValue()) {
-			action = Action.diff;
+			action = Action.odejmowanie;
 		}
 		if(radioDivide.getValue()) {
-			action = Action.divide;
+			action = Action.dzielenie;
 		}
 		if(radioRatio.getValue()) {
-			action = Action.ratio;
+			action = Action.mnozenie;
 		}
 	}
 

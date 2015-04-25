@@ -32,13 +32,13 @@ public class SampleGwtServiceImpl extends RemoteServiceServlet implements Sample
 	}
 
 	private Double calculate(double productOne, double productTwo, Action action) {
-		if(action == Action.sum) {
+		if(action == Action.dodawanie) {
 			return productOne + productTwo;
-		} else if(action == Action.diff) {
+		} else if(action == Action.odejmowanie) {
 			return productOne - productTwo;
-		} else if(action == Action.ratio) {
+		} else if(action == Action.mnozenie) {
 			return productOne * productTwo;
-		} else if(action == Action.divide) {
+		} else if(action == Action.dzielenie) {
 			return divide(productOne, productTwo);
 		}
 		return null;
