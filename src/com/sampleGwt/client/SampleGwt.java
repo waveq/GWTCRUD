@@ -3,6 +3,7 @@ package com.sampleGwt.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -33,6 +34,7 @@ public class SampleGwt implements EntryPoint {
 	final TextBox productOne = new TextBox();
 	final TextBox productTwo = new TextBox();
 	final Label result = new Label();
+	final Label alert = new Label("Nie dziel przez zero cholero");
 
 	static List<Calc> calculationList = new ArrayList<Calc>();
 	static Calc calc;
@@ -53,9 +55,21 @@ public class SampleGwt implements EntryPoint {
 		calcButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				setAction();
-				calc = new Calc(Double.parseDouble(productOne.getText()), Double.parseDouble(productTwo.getText()), action);
+				RootPanel.get("divide").clear();
+				if(!dividingByZero()) {
+					if(isDouble(productOne.getText()) && isDouble(productTwo.getText())) {
 
-				SampleGwtService.App.getInstance().calculateResult(calc, new CalculateAsyncCallback(result));
+						calc = new Calc(Double.parseDouble(productOne.getText()), Double.parseDouble(productTwo.getText()), action);
+
+						SampleGwtService.App.getInstance().calculateResult(calc, new CalculateAsyncCallback(result));
+					}
+					else {
+						alertNotNumber();
+					}
+				}
+				else {
+					alertDivisionByZero();
+				}
 			}
 		});
 
@@ -76,6 +90,37 @@ public class SampleGwt implements EntryPoint {
 				}
 			}
 		});
+	}
+
+	private void alertNotNumber() {
+		RootPanel.get("save").clear();
+		alert.setText("Możesz używać tylko liczb");
+		RootPanel.get("divide").add(alert);
+	}
+
+	private void alertDivisionByZero() {
+		RootPanel.get("save").clear();
+		alert.setText("Nie dziel przez zero cholero");
+		RootPanel.get("divide").add(alert);
+	}
+
+	private boolean isDouble(String input) {
+		try {
+			Integer.parseInt( input );
+			return true;
+		}
+		catch( Exception e){
+			return false;
+		}
+	}
+
+	private boolean dividingByZero() {
+		if(action == Action.dzielenie) {
+			if(productTwo.getText().equals("0")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void setAction() {
@@ -99,6 +144,7 @@ public class SampleGwt implements EntryPoint {
 		RootPanel.get("button").add(calcButton);
 		RootPanel.get("result").add(result);
 		RootPanel.get("deleteButton").add(deleteButton);
+
 		setActions();
 		SampleGwtService.App.getInstance().getAllCalculations(new getCalculationsAsyncCallback());
 	}
